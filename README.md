@@ -1,11 +1,17 @@
-# hands-on-2021
-Hands-on project session 2021
+# Hands-on-2021
 
-## Different projects are considered
+Build a model and an interface to classify traffic signs (GTSRB dataset).
 
-* project 1
-* project 2
+## Install
+
+* clone this repository 
+* download images with `scripts/download_images.sh`
 
 ## Additional comments
 
-This is an additional comment.
+Nothing yet.
+
+## References
+
+* Dataset introduction: https://benchmark.ini.rub.de/gtsrb_dataset.htm
+* Images: https://sid.erda.dk/public/archives/daaeac0d7ce1152aea9b61d9f1e19370/published-archive.html
