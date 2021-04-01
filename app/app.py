@@ -144,12 +144,24 @@ def update_output(contents):
                 content_string = base64.b64encode(img_bytes).decode('ascii')
                 # Appel du modèle de classification
                 class_proba = classify_image(image, classifier)[0]
+                label = np.array(range(0,43))
+                fig = px.bar(x=label, y=class_proba, 
+                    barmode="group", labels=dict(x="Classes", 
+                        y = "Probability",tip="Tip ($)"))
+
+                fig.update_layout(
+                    height=600,
+                    width = 700,
+                    title_text='Probability for each class',
+                    )
                 # Affichage de l'image
                 return html.Div([
                     html.Hr(),
                     html.Img(src='data:image/png;base64,' + content_string),
                     html.H3('Classe prédite : {}'.format(CLASSES[class_proba])),
                     html.Hr(),
+                    dcc.Graph(id='bar_chart',
+                        figure=fig)
                 ])
             except:
                 return html.Div([
@@ -157,7 +169,7 @@ def update_output(contents):
                     html.Div('Uniquement des images svp : {}'.format(content_type)),
                     html.Hr(),                
                     html.Div('Raw Content'),
-                    html.Pre(contents, style=pre_style)
+                    html.Pre(contents, style=pre_style),
                 ])
             
 
