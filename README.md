@@ -7,9 +7,6 @@ Build a model and an interface to classify traffic signs (GTSRB dataset).
 * clone this repository 
 * download images with `scripts/download_images.sh`
 
-## Additional comments
-
-Nothing yet.
 
 ## References
 
