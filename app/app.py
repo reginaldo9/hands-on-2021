@@ -2,9 +2,10 @@ import base64
 import io
 
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
 import dash_bootstrap_components as dbc
+import dash_html_components as html
+import dash_core_components as dcc
+import plotly.express as px
 from dash.dependencies import Input, Output
 
 import numpy as np
@@ -38,10 +39,10 @@ def classify_image(image, model, image_box=None):
   image = np.array(image)
   images_list.append(image)
   
-  return model.predict_classes(np.array(images_list))
+  return model.predict(np.array(images_list))
 
 
-app = dash.Dash('Traffic Signs Recognition') #, external_stylesheets=dbc.themes.BOOTSTRAP)
+app = dash.Dash('Traffic Signs Recognition' external_stylesheets=dbc.themes.BOOTSTRAP)
 
 
 pre_style = {
@@ -50,29 +51,67 @@ pre_style = {
     'whiteSpace': 'normal'
 }
 
+# styling the sidebar
+SIDEBAR_STYLE = {
+    "position": "fixed",
+    "top": 0,
+    "left": 0,
+    "bottom": 0,
+    "width": "16rem",
+    "padding": "2rem 1rem",
+    "background-color": "#f8f9fa",
+}
 
-# Define application layout
-app.layout = html.Div([
+# padding for the page content
+CONTENT_STYLE = {
+    "margin-left": "18rem",
+    "margin-right": "2rem",
+    "padding": "6rem 6rem",
+    'width': '50%',
+    'height': '60px',
+    'lineHeight': '60px',
+    'borderWidth': '1px',
+    'borderStyle': 'dashed',
+    'borderRadius': '5px',
+    'textAlign': 'center'
+}
+
+sidebar = html.Div(
+    [
+        html.H2("Traffic Signs", className="display-4"),
+        html.Hr(),
+        html.P(
+            "Classifying Traffic Signs using DNN", className="lead"
+        ),
+    ],
+    style=SIDEBAR_STYLE,
+)
+
+content = html.Div([
     dcc.Upload(
         id='bouton-chargement',
         children=html.Div([
             'Cliquer-déposer ou ',
                     html.A('sélectionner une image')
         ]),
-        style={
-            'width': '50%',
-            'height': '60px',
-            'lineHeight': '60px',
-            'borderWidth': '1px',
-            'borderStyle': 'dashed',
-            'borderRadius': '5px',
-            'textAlign': 'center',
-            'margin': '10px'
-        }
+        style=CONTENT_STYLE
     ),
-    html.Div(id='mon-image'),
-    dcc.Input(id='mon-champ-texte', value='valeur initiale', type='text'),
-    html.Div(id='ma-zone-resultat')
+    html.Div(id='mon-image',
+        style=CONTENT_STYLE),
+    dcc.Input(id='mon-champ-texte', value='valeur initiale', type='text', 
+        style={"margin-left": "18rem",
+            "margin-right": "2rem",
+            "padding": "2rem 2rem"}),
+    html.Div(id='ma-zone-resultat', 
+        style={"margin-left": "18rem",
+            "margin-right": "2rem",
+            "padding": "3rem 3rem"})
+])
+
+
+app.layout = html.Div([
+    sidebar,
+    content
 ])
 
 @app.callback(Output('mon-image', 'children'),
@@ -82,11 +121,11 @@ def update_output(contents):
         content_type, content_string = contents.split(',')
         if 'image' in content_type:
             image = Image.open(io.BytesIO(base64.b64decode(content_string)))
-            predicted_class = classify_image(image, classifier)[0]
+            class_proba = classify_image(image, classifier)[0]
             return html.Div([
                 html.Hr(),
                 html.Img(src=contents),
-                html.H3('Classe prédite : {}'.format(CLASSES[predicted_class])),
+                html.H3('Classe prédite : {}'.format(CLASSES[class_proba])),
                 html.Hr(),
                 #html.Div('Raw Content'),
                 #html.Pre(contents, style=pre_style)
@@ -104,12 +143,12 @@ def update_output(contents):
                 img_bytes = buffer.read()
                 content_string = base64.b64encode(img_bytes).decode('ascii')
                 # Appel du modèle de classification
-                predicted_class = classify_image(image, classifier)[0]
+                class_proba = classify_image(image, classifier)[0]
                 # Affichage de l'image
                 return html.Div([
                     html.Hr(),
                     html.Img(src='data:image/png;base64,' + content_string),
-                    html.H3('Classe prédite : {}'.format(CLASSES[predicted_class])),
+                    html.H3('Classe prédite : {}'.format(CLASSES[class_proba])),
                     html.Hr(),
                 ])
             except:
