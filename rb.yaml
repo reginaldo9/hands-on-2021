@@ -1,0 +1,19 @@
+data : './GTSRB/Final_Training/Images/*/*.csv'
+model_dnn_path : '../models/traffic_signs_2021-03-19_13-51-00.h5'
+model_svm_path : '../models/svm_model.pkl'
+
+test_size : 0.2
+random_state : 42
+batch_size : 32
+epochs : 15
+N : 10_000
+optimizer : 'rb'
+activation : 'relu'
+activation_L : 'softmax'
+Dropout_rate1 : 0.25
+Dropout_rate2 : 0.25
+Dropout_rate3: 0.5
+metrics : 'accuracy'
+loss : 'categorical_crossentropy'
+C : 1
+
